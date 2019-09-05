@@ -1,0 +1,63 @@
+" vim-plug setup
+"==============================================================
+" Plugins will be downloaded under the specified directory.
+call plug#begin('~/.vim/plugged')
+
+" Declare the list of plugins.
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-fugitive'
+Plug 'Valloric/YouCompleteMe'
+Plug 'morhetz/gruvbox'
+
+" List ends here. Plugins become visible to Vim after this call.
+call plug#end()
+
+"===============================================================
+set t_Co=256
+syntax on "highlght syntax
+colorscheme gruvbox
+"Sets vim background to transparent since gruvbox was slightly off
+hi Normal guibg=NONE ctermbg=NONE
+"let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+"let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+set number "show line numbers
+set number relativenumber "relative line numbers
+set clipboard=unnamed " use os clipboard
+set smartindent
+set shiftwidth=2 " number of spaces when shift indenting
+set tabstop=2 " number of visual spaces per tab
+set softtabstop=2 " number of spaces in tab when editing
+set expandtab " tab to spaces
+set incsearch "searches as characters are entered
+set hlsearch "highlight matches
+set showmatch "highlight matching [{()}]
+set backspace=indent,eol,start "allows backspacing in insert mode
+
+set wildmenu
+" Don't offer to open certain files/directories
+set wildignore+=*.bmp,*.gif,*.jpg,*.png,*.ico
+set wildignore+=*.pdf,*.psd
+set wildignore+=node_modules/*
+
+"NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " autoquit if only nerdtree is open
+
+map <C-f> :NERDTreeToggle<CR>
+
+" switch to left / right split (mostly for Nerd Tree)
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" move between buffers
+map <C-Left> <Esc>:bprev<CR>
+map <C-Right> <Esc>:bnext<CR>
+
+" airline
+"let g:airline_theme = 'minimalist'
+let g:airline#extensions#tabline#enabled = 0
+let g:airline#extensions#branch#enabled = 1 
+"set laststatus=2 " for airline
+
