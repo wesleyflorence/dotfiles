@@ -7,9 +7,11 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-fugitive'
-Plug 'Valloric/YouCompleteMe'
+"Plug 'tpope/vim-fugitive'
+"Plug 'Valloric/YouCompleteMe'
 Plug 'morhetz/gruvbox'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
@@ -23,7 +25,8 @@ hi Normal guibg=NONE ctermbg=NONE
 "let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 "let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-set number "show line numbers
+set nocompatible
+"set number "show line numbers
 set number relativenumber "relative line numbers
 set clipboard=unnamed " use os clipboard
 set smartindent
