@@ -7,8 +7,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-sleuth'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'airblade/vim-gitgutter'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -56,6 +58,8 @@ autocmd InsertLeave * set nocursorline
 " NERDTree
 nnoremap <C-f> :NERDTreeToggle<CR> "ctrl-f for nerdtree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " autoquit if only nerdtree is open
+let g:NERDTreeUpdateOnCursorHold = 0
+let g:NERDTreeUpdateOnWrite      = 0
 
 " Wildmenu stuff
 set wildmenu
@@ -67,6 +71,14 @@ set wildignore+=node_modules/*
 set foldmethod=indent " not as cool as syntax, but faster
 set foldlevelstart=1 " start unfolded
 
+" Git-gutter
+set updatetime=300
+let g:gitgutter_sign_added              = '▐'
+let g:gitgutter_sign_modified           = '▐'
+let g:gitgutter_sign_modified_removed   = '▶'
+let g:gitgutter_sign_removed            = '▶'
+let g:gitgutter_sign_removed_first_line = '◥'
+  
 " Coc.nvim default settings
 " ============================================
 set hidden " if hidden is not set, TextEdit might fail.
