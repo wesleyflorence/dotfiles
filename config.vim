@@ -9,8 +9,10 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-sleuth'
-Plug 'ctrlpvim/ctrlp.vim'
+"Plug 'ctrlpvim/ctrlp.vim'
 Plug 'airblade/vim-gitgutter'
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -56,7 +58,19 @@ autocmd InsertEnter * set cursorline
 autocmd InsertLeave * set nocursorline
 
 " NERDTree
-nnoremap <C-f> :NERDTreeToggle<CR> "ctrl-f for nerdtree
+" This function NERDTreeToggle's unless you're in a file in which case it
+" highlights the fiel you're editing in the tree
+function! NERDTreeToggleFind()
+    if exists("g:NERDTree") && g:NERDTree.IsOpen()
+        NERDTreeClose
+    elseif filereadable(expand('%'))
+        NERDTreeFind
+    else
+        NERDTree
+    endif
+endfunction
+
+nnoremap <C-f> :call NERDTreeToggleFind()<CR> "ctrl-f for nerdtree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " autoquit if only nerdtree is open
 let g:NERDTreeUpdateOnCursorHold = 0
 let g:NERDTreeUpdateOnWrite      = 0
@@ -71,6 +85,9 @@ set wildignore+=node_modules/*
 set foldmethod=indent " not as cool as syntax, but faster
 set foldlevelstart=1 " start unfolded
 
+" Buffers
+nnoremap <C-a> :ls<CR>:b<space>
+
 " Git-gutter
 set updatetime=300
 let g:gitgutter_sign_added              = '▐'
@@ -78,7 +95,11 @@ let g:gitgutter_sign_modified           = '▐'
 let g:gitgutter_sign_modified_removed   = '▶'
 let g:gitgutter_sign_removed            = '▶'
 let g:gitgutter_sign_removed_first_line = '◥'
-  
+
+" FZF files
+nnoremap <C-p> :Files<Cr> " fuzzy find file path
+nnoremap <C-_> :Rg<Cr> " Ripgrep contents
+
 " Coc.nvim default settings
 " ============================================
 set hidden " if hidden is not set, TextEdit might fail.
@@ -130,10 +151,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
-" Move between buffers
-map <C-Left> <Esc>:bprev<CR>
-map <C-Right> <Esc>:bnext<CR>
 
 " Adding JFlex Syntax for compilers project
 augroup filetype
