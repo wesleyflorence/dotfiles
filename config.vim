@@ -58,8 +58,8 @@ autocmd InsertEnter * set cursorline
 autocmd InsertLeave * set nocursorline
 
 " NERDTree
-" This function NERDTreeToggle's unless you're in a file in which case it
-" highlights the fiel you're editing in the tree
+" This function NERDTreeToggles unless you're in a file in which case it
+" highlights the file you're editing in the tree
 function! NERDTreeToggleFind()
     if exists("g:NERDTree") && g:NERDTree.IsOpen()
         NERDTreeClose
