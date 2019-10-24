@@ -24,6 +24,7 @@ let &t_AB="\e[48;5;%dm"    "These lines hide two colors vim was set on including
 let &t_AF="\e[38;5;%dm"
 syntax on "highlght syntax
 hi Normal guibg=NONE ctermbg=NONE "Sets vim background to transparnt
+highlight clear SignColumn " Makes the gutter transparent
 
 " Sensible stuff
 set nocompatible
@@ -86,6 +87,23 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 " ============================================
 
 " Auto Open the quickfix window when grepping
@@ -105,3 +123,10 @@ nnoremap <C-H> <C-W><C-H>
 map <C-Left> <Esc>:bprev<CR>
 map <C-Right> <Esc>:bnext<CR>
 
+" Adding JFlex Syntax for compilers project
+augroup filetype
+  au BufRead,BufNewFile *.flex,*.jflex    set filetype=jflex
+augroup END
+au Syntax jflex    so ~/.vim/syntax/jflex.vim
+
+autocmd BufNewFile,BufRead *.cup setf cup
