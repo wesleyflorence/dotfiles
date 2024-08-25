@@ -8,6 +8,7 @@ cli_packages:
   - tmux
   - tree
   - bottom
+  - neovim 
 
 gui_packages:
   - visual-studio-code

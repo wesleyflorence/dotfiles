@@ -1,3 +1,4 @@
 ---
 - include_tasks: fish.yml
 - include_tasks: tmux.yml
+- include_tasks: nvim.yml

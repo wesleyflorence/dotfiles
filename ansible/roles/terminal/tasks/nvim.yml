@@ -1,0 +1,40 @@
+---
+- name: Ensure Neovim config directory exists
+  file:
+    path: "{{ user_home }}/.config/nvim"
+    state: directory
+    mode: '0755'
+
+- name: Check existing Neovim config files and directories
+  stat:
+    path: "{{ user_home }}/.config/nvim/{{ item }}"
+  loop:
+    - init.lua
+    - lazy-lock.json
+    - ftplugin
+    - lua
+  register: nvim_config_stat
+
+- name: Backup existing Neovim config files and directories
+  command: mv {{ user_home }}/.config/nvim/{{ item.item }} {{ user_home }}/.config/nvim/{{ item.item }}.bak
+  when: item.stat.exists and not item.stat.islnk
+  loop: "{{ nvim_config_stat.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Link Neovim config files and directories
+  file:
+    src: "{{ playbook_dir }}/../../config/nvim/{{ item.item }}"
+    dest: "{{ user_home }}/.config/nvim/{{ item.item }}"
+    state: link
+    force: yes
+  loop: "{{ nvim_config_stat.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Debug Neovim config linking
+  debug:
+    msg: "Linked Neovim configuration: {{ item.item }}"
+  loop: "{{ nvim_config_stat.results }}"
+  loop_control:
+    label: "{{ item.item }}"
