@@ -1,0 +1,9 @@
+---
+- name: Ensure config directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ ansible_env.HOME }}/.config/fish"
+    - "{{ ansible_env.HOME }}/.config/tmux"

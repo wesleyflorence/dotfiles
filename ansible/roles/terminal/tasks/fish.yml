@@ -1,0 +1,89 @@
+---
+- name: Check if Fish is installed and is the default shell
+  shell: |
+    which fish && dscl . -read /Users/{{ ansible_user_id }} UserShell | grep -q "$(which fish)"
+  register: fish_check
+  changed_when: false
+  failed_when: false
+
+- name: Prompt for sudo password
+  pause:
+    prompt: "Sudo password is required for some operations. Please enter your sudo password"
+  register: sudo_password
+  when: fish_check.rc != 0
+
+- name: Install Fish shell
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_pass: "{{ sudo_password.user_input | default(omit) }}"
+  package:
+    name: fish
+    state: present
+  when: fish_check.rc != 0
+
+- name: Ensure Fish config directory exists
+  file:
+    path: "{{ user_home }}/.config/fish"
+    state: directory
+    mode: '0755'
+
+- name: Link Fish config file
+  file:
+    src: "{{ playbook_dir }}/../../config/fish/config.fish"
+    dest: "{{ fish_config_path }}"
+    state: link
+    force: yes
+    follow: false
+
+- name: Link Fish Env file
+  file:
+    src: "{{ playbook_dir }}/../../config/fish/env.fish"
+    dest: "{{ user_home }}/.config/fish/env.fish"
+    state: link
+    force: yes
+    follow: false
+
+- name: Get Fish shell path
+  command: which fish
+  register: fish_path
+  changed_when: false
+
+- name: Check if Fish shell is in /etc/shells
+  command: grep -q "{{ fish_path.stdout }}" /etc/shells
+  register: fish_in_etc_shells
+  changed_when: false
+  failed_when: false
+
+- name: Ensure Fish shell is in /etc/shells
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_pass: "{{ sudo_password.user_input | default(omit) }}"
+  lineinfile:
+    path: /etc/shells
+    line: "{{ fish_path.stdout }}"
+    state: present
+  when: fish_in_etc_shells.rc != 0 and fish_check.rc != 0
+  register: add_fish_to_etc_shells
+
+- name: Display result of adding Fish to /etc/shells
+  debug:
+    msg: "Fish shell {{ 'added to' if add_fish_to_etc_shells.changed else 'already in' }} /etc/shells"
+
+- name: Set Fish as default shell
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_pass: "{{ sudo_password.user_input | default(omit) }}"
+  command: chsh -s {{ fish_path.stdout }} {{ ansible_user_id }}
+  when: fish_check.rc != 0
+  register: set_default_shell
+
+- name: Display result of setting default shell
+  debug:
+    msg: "Default shell {{ 'changed to Fish' if set_default_shell.changed else 'is already Fish' }}"
+
+- name: Display success message
+  debug:
+    msg: "Fish shell setup completed. Please log out and log back in for any changes to take effect."

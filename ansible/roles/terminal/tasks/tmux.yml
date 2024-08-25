@@ -1,0 +1,8 @@
+---
+- name: Link tmux config file
+  file:
+    src: "{{ playbook_dir }}/../../config/tmux/tmux.conf"
+    dest: "{{ tmux_config_path }}"
+    state: link
+    force: yes
+    follow: false

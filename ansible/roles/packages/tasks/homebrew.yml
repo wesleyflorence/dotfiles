@@ -1,0 +1,28 @@
+---
+- name: Install or update CLI packages with Homebrew
+  homebrew:
+    name: "{{ cli_packages }}"
+    state: latest
+  register: cli_install_result
+
+- name: Display CLI package installation results
+  debug:
+    var: cli_install_result
+    verbosity: 1
+
+- name: Install or update GUI packages with Homebrew Cask
+  homebrew_cask:
+    name: "{{ gui_packages }}"
+    state: present
+    accept_external_apps: yes
+  register: gui_install_result
+
+- name: Display GUI package installation results
+  debug:
+    var: gui_install_result
+    verbosity: 1
+
+- name: Check if any installations failed
+  fail:
+    msg: "Some package installations failed. Please check the output above for details."
+  when: cli_install_result.failed or gui_install_result.failed

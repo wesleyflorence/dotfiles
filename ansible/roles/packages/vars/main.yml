@@ -1,0 +1,14 @@
+---
+cli_packages:
+  - eza
+  - bat
+  - ripgrep
+  - fd
+  - fzf
+  - tmux
+  - tree
+  - bottom
+
+gui_packages:
+  - visual-studio-code
+  - intellij-idea-ce
