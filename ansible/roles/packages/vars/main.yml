@@ -9,6 +9,7 @@ cli_packages:
   - tree
   - bottom
   - neovim 
+  - aider
 
 gui_packages:
   - visual-studio-code
