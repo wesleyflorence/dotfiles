@@ -101,23 +101,6 @@ local normal_mappings = {
   ["v"] = { "<cmd>lua require('telescope.builtin').find_files({cwd = '~/vault'})<cr>", "Vault" },
   ["u"] = { "<cmd>UndotreeToggle<cr>", "Undo Tree" },
 
-  a = {
-    name = "AI",
-    a = { "<cmd>ChatGPT<CR>", "ChatGPT" },
-    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction" },
-    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction" },
-    T = { "<cmd>ChatGPTRun translate<CR>", "Translate" },
-    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords" },
-    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring" },
-    t = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests" },
-    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code" },
-    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize" },
-    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs" },
-    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code" },
-    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit" },
-    l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis" },
-  },
-
   g = {
     name = "Git",
     --g = { "<cmd>lua _LAZYGIT_TOGGLE()<CR>", "Lazygit" },
@@ -140,6 +123,16 @@ local normal_mappings = {
     d = {
       "<cmd>Gitsigns diffthis HEAD<cr>",
       "Diff",
+    },
+    w = {
+      "<cmd>:execute ':!git-open --suffix "
+        .. "(git ls-files --full-name %)\\#L' . line('.')<cr>",
+      "Web Browse Remote"
+    },
+    W = {
+      "<cmd>:execute ':!git-open --board --suffix "
+        .. "(git ls-files --full-name %)\\#L' . line('.')<cr>",
+      "Copy Web Browse Remote URL"
     },
   },
 
@@ -219,22 +212,7 @@ local visual_opts = {
 }
 
 local visual_mappings = {
-  ["r"] ={"<cmd>lua require('iron.core').visual_send()<cr>", "Send Python Selection"},
-  a = {
-    name = "AI",
-    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction" },
-    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction" },
-    T = { "<cmd>ChatGPTRun translate<CR>", "Translate" },
-    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords" },
-    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring" },
-    t = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests" },
-    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code" },
-    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize" },
-    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs" },
-    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code" },
-    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit" },
-    l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis" },
-  },
+  ["r"] ={"<cmd>lua require('iron.core').visual_send()<cr>", "Send Python Selection"}
 }
 
 which_key.setup(setup)

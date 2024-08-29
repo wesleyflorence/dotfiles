@@ -72,6 +72,8 @@ return {
 
   -- cmp plugins
   { "hrsh7th/cmp-cmdline" }, -- cmdline completions
+  { "onsails/lspkind.nvim"},
+  { "zbirenbaum/copilot-cmp" }, -- copilot cmp
 
   -- Golang
   { 'crispgm/nvim-go' },

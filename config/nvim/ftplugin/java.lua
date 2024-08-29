@@ -60,20 +60,21 @@ local config = {
   -- The command that starts the language server
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   cmd = {
-    --"java", -- or '/path/to/java11_or_newer/bin/java'
-    "/Library/Java/JavaVirtualMachines/openjdk-18/Contents/Home/bin/java",
+    "java", -- or '/path/to/java11_or_newer/bin/java'
+    -- "/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home/bin/java",
     "-Declipse.application=org.eclipse.jdt.ls.core.id1",
     "-Dosgi.bundles.defaultStartLevel=4",
     "-Declipse.product=org.eclipse.jdt.ls.core.product",
     "-Dlog.protocol=true",
     "-Dlog.level=ALL",
-    "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
     "-Xms1g",
     "--add-modules=ALL-SYSTEM",
     "--add-opens",
     "java.base/java.util=ALL-UNNAMED",
     "--add-opens",
     "java.base/java.lang=ALL-UNNAMED",
+    -- "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
+    "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
     "-jar",
     vim.fn.glob(mason_path .. "jdtls/plugins/org.eclipse.equinox.launcher_*.jar"),
     "-configuration",
