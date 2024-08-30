@@ -10,7 +10,13 @@ cli_packages:
   - bottom
   - neovim 
   - aider
+  - uv
 
 gui_packages:
   - visual-studio-code
   - intellij-idea-ce
+  - font-jetbrains-mono-nerd-font 
+  - alacritty
+
+python_packages:
+    - shell-gpt

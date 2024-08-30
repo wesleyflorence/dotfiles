@@ -1,5 +1,7 @@
 if status is-interactive
   # Commands to run in interactive sessions can go here
+  set fish_greeting "🌊🌊🌊"
+
   # Editor
   alias vim 'nvim'
   alias vi 'nvim'
@@ -156,3 +158,5 @@ end
 # Env Vars
 source ~/.config/fish/env.fish
 
+# Always add homebrew to the path
+set -x PATH /opt/homebrew/bin /opt/homebrew/sbin ~/bin ~/.local/bin $PATH

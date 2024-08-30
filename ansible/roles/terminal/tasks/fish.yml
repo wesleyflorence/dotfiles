@@ -84,6 +84,36 @@
   debug:
     msg: "Default shell {{ 'changed to Fish' if set_default_shell.changed else 'is already Fish' }}"
 
+- name: Check if Fisher is installed
+  shell: fish -c "functions -q fisher"
+  register: fisher_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Fisher if not installed
+  shell: curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+  args:
+    executable: "{{ fish_path.stdout }}"
+  when: fisher_check.rc != 0
+
+- name: Install Fish packages using Fisher
+  shell: fisher install {{ item }}
+  args:
+    executable: "{{ fish_path.stdout }}"
+  loop:
+    - jorgebucaran/hydro
+    - PatrickF1/fzf.fish
+  register: fisher_install
+  changed_when: "'Installing' in fisher_install.stdout"
+
+- name: Display Fish packages installation result
+  debug:
+    msg: "Fish packages installation {{ 'completed' if fisher_install.changed else 'already up to date' }}"
+
+- name: Display success message
+  debug:
+    msg: "Fish shell and packages setup completed. Please restart your shell or source your config for changes to take effect."
+
 - name: Display success message
   debug:
     msg: "Fish shell setup completed. Please log out and log back in for any changes to take effect."

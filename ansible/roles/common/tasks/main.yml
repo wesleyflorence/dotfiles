@@ -7,3 +7,4 @@
   loop:
     - "{{ ansible_env.HOME }}/.config/fish"
     - "{{ ansible_env.HOME }}/.config/tmux"
+    - "{{ ansible_env.HOME }}/.config/alacritty"

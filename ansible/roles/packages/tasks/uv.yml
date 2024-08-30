@@ -1,0 +1,15 @@
+- name: Install packages using uv
+  ansible.builtin.command:
+    cmd: "/opt/homebrew/bin/uv tool install {{ item }}"
+  loop: "{{ python_packages }}"
+  environment:
+    PATH: "/opt/homebrew/bin:{{ ansible_env.PATH }}"
+  register: uv_install_result
+  changed_when: "'installed' in uv_install_result.stdout"
+  failed_when: 
+    - uv_install_result.rc != 0
+    - "'already satisfied' not in uv_install_result.stdout"
+
+- name: Display installation results
+  ansible.builtin.debug:
+    var: uv_install_result

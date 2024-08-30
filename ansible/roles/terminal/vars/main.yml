@@ -2,3 +2,4 @@
 user_home: "{{ ansible_env.HOME }}"
 fish_config_path: "{{ user_home }}/.config/fish/config.fish"
 tmux_config_path: "{{ user_home }}/.config/tmux/tmux.conf"
+alacritty_config_path: "{{ user_home }}/.config/alacritty/alacritty.toml"
