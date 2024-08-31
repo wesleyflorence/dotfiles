@@ -1,0 +1,19 @@
+---
+- name: Install ASDF plugins
+  command: asdf plugin add {{ item }}
+  loop:
+    - bun
+  changed_when: false
+  ignore_errors: yes  # In case the plugin is already installed
+
+- name: Install Bun with ASDF
+  command: asdf install bun latest
+  changed_when: false
+
+- name: Set latest Bun as global version
+  command: asdf global bun latest
+  changed_when: false
+
+- name: Refresh ASDF shims
+  command: asdf reshim
+  changed_when: false

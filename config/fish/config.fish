@@ -19,6 +19,7 @@ if status is-interactive
   # Ansible abbreviations
   set -x ANSIBLE_CONFIG ~/dotfiles/ansible/ansible.cfg
   abbr -a apl 'ansible-playbook ~/dotfiles/ansible/playbooks/main.yml'
+  abbr dots 'nvim ~/dotfiles'
 
   # Fzf
   alias ff fzf-find-file
@@ -26,7 +27,7 @@ if status is-interactive
   alias frg fzf-rg
 
   # Aider
-  alias aider 'aider --config ~/.config/aider/.aider.conf.yml'
+  alias aider 'aider --config ~/dotfiles/config/aider/.aider.conf.yml'
 
   # Github Copilot
   abbr ghcs 'gh copilot suggest'

@@ -6,3 +6,4 @@
   when: ansible_os_family == 'Debian'
 
 - include_tasks: uv.yml
+- include_tasks: asdf.yml
