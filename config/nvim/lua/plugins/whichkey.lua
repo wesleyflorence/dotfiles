@@ -8,7 +8,8 @@ return {
       group = "+",
     },
     win = {
-    }
+      border = "rounded",
+    },
   },
   keys = {
     { "<leader>b", "<cmd>lua require('telescope.builtin').buffers(require('telescope.themes').get_dropdown{previewer = false})<cr>", desc = "Buffers" },
@@ -28,7 +29,6 @@ return {
     { "<leader>u", "<cmd>UndotreeToggle<cr>", desc = "Undo Tree" },
     
     -- Git mappings
-    { "<leader>X", group = "git" },
     { "<leader>gg", "<cmd>lua require 'neogit'.open()<CR>", desc = "Neogit" },
     { "<leader>gj", "<cmd>lua require 'gitsigns'.next_hunk()<cr>", desc = "Next Hunk" },
     { "<leader>gk", "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", desc = "Prev Hunk" },
@@ -47,7 +47,6 @@ return {
     { "<leader>gW", "<cmd>:execute ':!git-open --board --suffix " .. "(git ls-files --full-name %)\\#L' . line('.')<cr>", desc = "Copy Web Browse Remote URL" },
 
     -- Debug mappings
-    { "<leader>d", group = "debug" },
     { "<leader>db", "<cmd>lua require'dap'.toggle_breakpoint()<cr>", desc = "Breakpoint" },
     { "<leader>dc", "<cmd>lua require'dap'.continue()<cr>", desc = "Continue" },
     { "<leader>di", "<cmd>lua require'dap'.step_into()<cr>", desc = "Into" },
@@ -59,7 +58,6 @@ return {
     { "<leader>dx", "<cmd>lua require'dap'.terminate()<cr>", desc = "Exit" },
 
     -- LSP mappings
-    { "<leader>l", group = "lsp" },
     { "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },
     { "<leader>ld", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
     { "<leader>lf", "<cmd>lua vim.lsp.buf.format({ async = true })<cr>", desc = "Format" },
@@ -77,7 +75,6 @@ return {
     { "<leader>lt", "<cmd>:Telescope lsp_type_definitions<cr>", desc = "Type Definitions" },
 
     -- Search mappings
-    { "<leader>s", group = "search" },
     { "<leader>sc", "<cmd>Telescope colorscheme<cr>", desc = "Colorscheme" },
     { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Find Help" },
     { "<leader>sM", "<cmd>Telescope man_pages<cr>", desc = "Man Pages" },
@@ -88,7 +85,6 @@ return {
     { "<leader>ss", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Search Buffer" },
 
     -- Modify mappings
-    { "<leader>m", group = "mod" },
     { "<leader>mw", "<cmd>:set wrap!<cr>", desc = "Toggle Wrap" },
     { "<leader>mp", "<cmd>:echo expand('%p')<cr>", desc = "Full Path" },
     { "<leader>ms", "<cmd>:put =strftime('# %Y.%m.%d')<cr>", desc = "Timestamp" },
@@ -98,4 +94,14 @@ return {
     -- Visual mode mappings
     { "<leader>r", "<cmd>lua require('iron.core').visual_send()<cr>", mode = "v", desc = "Send Python Selection" },
   },
+  init = function()
+    local wk = require("which-key")
+    wk.add {
+      { "<leader>g", group = "git" },
+      { "<leader>d", group = "debug" },
+      { "<leader>l", group = "lsp" },
+      { "<leader>s", group = "search" },
+      { "<leader>m", group = "mod" },
+    }
+  end,
 }

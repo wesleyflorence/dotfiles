@@ -21,4 +21,6 @@ gui_packages:
 
 python_packages:
     - shell-gpt
+    - shell-gpt[litellm]
     - aider-chat
+    - aider-chat[browser]

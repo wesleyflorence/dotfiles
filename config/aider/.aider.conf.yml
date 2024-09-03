@@ -1,3 +1,13 @@
-sonnet: true
 dark-mode: true
 read: CONVENTIONS.md
+
+# Ollama config
+#model: ollama/mistral-nemo
+
+# Copilot config
+openai-api-key: dummy_key
+4: true # Use gpt-4-0613 model for the main chat
+openai-api-base: http://localhost:51234/v1
+
+# Claude config
+# sonnet: true
