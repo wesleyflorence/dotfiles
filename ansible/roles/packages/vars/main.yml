@@ -8,6 +8,7 @@ cli_packages:
   - tmux
   - tree
   - bottom
+  - glow
   - neovim 
   - uv
   - asdf

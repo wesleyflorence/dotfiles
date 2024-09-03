@@ -12,10 +12,11 @@ return {
   },
 
   { "nvim-tree/nvim-web-devicons" },
+  { "echasnovski/mini.icons" },
   { "moll/vim-bbye" }, -- close buffer without messing up layout
 
-  -- Whichkey
-  { "folke/which-key.nvim" },
+  -- -- Whichkey
+  -- { "folke/which-key.nvim" },
 
   -- Telescope
   { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },

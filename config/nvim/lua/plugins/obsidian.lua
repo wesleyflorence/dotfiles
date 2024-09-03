@@ -1,15 +1,25 @@
 return {
   "epwalsh/obsidian.nvim",
+  version = "*",
   lazy = true,
+  ft = "markdown",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+  },
   opts = {
-    dir = "~/vault/",
-    completion = {
-      nvim_cmp = true,
-      note_frontmatter_func = nil, -- no front matter for now, might customize
-      daily_notes = {
-        folder = "jrn",
-      }
+    workspaces = {
+      {
+        name = "vault",
+        path = "~/vault",
+      },
     },
-    mappings = {}
+    templates = {
+      folder = "templates",
+    },
+    daily_notes = {
+      folder = "jrn",
+      -- date_format = "%Y.%m.%d",
+      template = "JrnTemplate.md"
+    },
   }
 }
