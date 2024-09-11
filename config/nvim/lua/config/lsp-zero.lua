@@ -38,6 +38,7 @@ require('mason-lspconfig').setup({
     "terraformls",
     "tsserver",
     "pyright",
+    "ruff",
     "yamlls",
     "bashls",
     "clangd",
@@ -52,7 +53,28 @@ require('mason-lspconfig').setup({
       require('lspconfig')[server_name].setup({})
     end,
 
-    jdtls = function() end -- Use jdtls
+    jdtls = function() end, -- Use jdtls
+
+    -- Use venv
+    pyright = function()
+      require('lspconfig').pyright.setup({
+        before_init = function(_, config)
+          local path = vim.fn.getcwd() .. '/.venv/bin/python'
+          if vim.fn.filereadable(path) == 1 then
+            config.settings.python.pythonPath = path
+          end
+        end,
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = 'workspace',
+            },
+          },
+        },
+      })
+    end,
   }
 })
 
