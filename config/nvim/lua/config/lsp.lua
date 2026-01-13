@@ -1,7 +1,11 @@
-local lsp_zero = require('lsp-zero')
-
 local lsp_attach = function(client, bufnr)
   local opts = {buffer = bufnr}
+
+  -- Enable inlay hints by default
+  if client.server_capabilities.inlayHintProvider then
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  end
+
   vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
   vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
   vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
@@ -14,19 +18,33 @@ local lsp_attach = function(client, bufnr)
   -- vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
 end
 
-lsp_zero.extend_lspconfig({
-  sign_text = true,
-  lsp_attach = lsp_attach,
-  capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- Set up diagnostics with signs
+vim.diagnostic.config({
+  signs = true,
+  virtual_text = true,
+  update_in_insert = false,
+  underline = true,
+  severity_sort = true,
+  float = {
+    focusable = false,
+    style = "minimal",
+    border = "rounded",
+    source = "always",
+    header = "",
+    prefix = "",
+  },
 })
 
+-- Set up LSP capabilities
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
   ensure_installed = {
     "gopls",
     "cssls",
-	  "tailwindcss",
+    "tailwindcss",
     "cssmodules_ls",
     "emmet_ls", -- web
     "html",
@@ -49,14 +67,19 @@ require('mason-lspconfig').setup({
   },
   handlers = {
     function(server_name)
-      require('lspconfig')[server_name].setup({})
+      require('lspconfig')[server_name].setup({
+        on_attach = lsp_attach,
+        capabilities = capabilities,
+      })
     end,
 
-    jdtls = function() end, -- Use jdtls
+    jdtls = function() end, -- Use jdtls ftplugin
 
-    -- Use venv
+    -- Use venv for pyright
     pyright = function()
       require('lspconfig').pyright.setup({
+        on_attach = lsp_attach,
+        capabilities = capabilities,
         before_init = function(_, config)
           local path = vim.fn.getcwd() .. '/.venv/bin/python'
           if vim.fn.filereadable(path) == 1 then
@@ -78,7 +101,6 @@ require('mason-lspconfig').setup({
 })
 
 local cmp = require('cmp')
--- require('copilot_cmp').setup({})
 local lspkind = require("lspkind")
 
 cmp.setup({
@@ -92,11 +114,11 @@ cmp.setup({
       vim.snippet.expand(args.body)
     end,
   },
-formatting = {
+  formatting = {
     format = lspkind.cmp_format({
       mode = "symbol",
       max_width = 50,
-      symbol_map = { Copilot = "" }
+      symbol_map = { Copilot = "" }
     })
   },
   mapping = cmp.mapping.preset.insert({

@@ -1,0 +1,14 @@
+---
+- name: Ensure Ghostty config directory exists
+  file:
+    path: "{{ user_home }}/.config/ghostty"
+    state: directory
+    mode: '0755'
+
+- name: Link Ghostty config file
+  file:
+    src: "{{ playbook_dir }}/../../config/ghostty/config"
+    dest: "{{ user_home }}/.config/ghostty/config"
+    state: link
+    force: yes
+    follow: false

@@ -13,7 +13,6 @@ return {
 
   { "nvim-tree/nvim-web-devicons" },
   { "echasnovski/mini.icons" },
-  { "moll/vim-bbye" }, -- close buffer without messing up layout
 
   -- Telescope
   { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
@@ -37,34 +36,23 @@ return {
   { "theHamsta/nvim-dap-virtual-text" },
 
   -- LSP
-  {
-    "VonHeikemen/lsp-zero.nvim",
-    dependencies = {
-      -- LSP Support
-      {"neovim/nvim-lspconfig"},
-      {"williamboman/mason.nvim"},
-      {"williamboman/mason-lspconfig.nvim"},
-      {"antoinemadec/FixCursorHold.nvim"}, -- This is needed to fix lsp doc highlight
+  { "neovim/nvim-lspconfig" },
+  { "williamboman/mason.nvim" },
+  { "williamboman/mason-lspconfig.nvim" },
 
-      -- Autocompletion
-      {"hrsh7th/nvim-cmp"},
-      {"hrsh7th/cmp-buffer"},
-      {"hrsh7th/cmp-path"},
-      {"saadparwaiz1/cmp_luasnip"},
-      {"hrsh7th/cmp-nvim-lsp"},
-      {"hrsh7th/cmp-nvim-lua"},
+  -- Autocompletion
+  { "hrsh7th/nvim-cmp" },
+  { "hrsh7th/cmp-buffer" },
+  { "hrsh7th/cmp-path" },
+  { "saadparwaiz1/cmp_luasnip" },
+  { "hrsh7th/cmp-nvim-lsp" },
+  { "hrsh7th/cmp-nvim-lua" },
 
-      -- Snippets
-      {"L3MON4D3/LuaSnip"},
-      {"rafamadriz/friendly-snippets"},
-    }
-  },
+  -- Snippets
+  { "L3MON4D3/LuaSnip" },
+  { "rafamadriz/friendly-snippets" },
   { "ray-x/lsp_signature.nvim" },
-  { "simrat39/symbols-outline.nvim" },
   { "b0o/SchemaStore.nvim" },
-  { "RRethy/vim-illuminate" },
-  { "lvimuser/lsp-inlayhints.nvim" },
-  { "https://git.sr.ht/~whynothugo/lsp_lines.nvim" },
 
   -- cmp plugins
   { "hrsh7th/cmp-cmdline" }, -- cmdline completions

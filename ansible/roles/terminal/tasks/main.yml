@@ -3,3 +3,4 @@
 - include_tasks: tmux.yml
 - include_tasks: nvim.yml
 - include_tasks: alacritty.yml
+- include_tasks: ghostty.yml

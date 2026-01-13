@@ -12,6 +12,7 @@ cli_packages:
   - neovim
   - uv
   - asdf
+  - zoxide
   # Code formatters for neovim
   - stylua          # Lua formatter
   - shfmt           # Shell script formatter
@@ -21,8 +22,10 @@ cli_packages:
 gui_packages:
   - visual-studio-code
   - intellij-idea-ce
-  - font-jetbrains-mono-nerd-font 
+  - font-jetbrains-mono-nerd-font
   - alacritty
+  - zen-browser
+  - ghostty
 
 python_packages:
     - shell-gpt

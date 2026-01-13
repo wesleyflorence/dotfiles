@@ -2,22 +2,16 @@ vim.opt_local.shiftwidth = 2
 vim.opt_local.tabstop = 2
 vim.opt_local.cmdheight = 2 -- more space in the neovim command line for displaying messages
 
-local status_cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-if not status_cmp_ok then
-  return
-end
-
 local status, jdtls = pcall(require, "jdtls")
 if not status then
   return
 end
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = false
-capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-
--- Determine OS
+-- Determine OS and Java path
 local home = os.getenv "HOME"
+local java_home = vim.fn.trim(vim.fn.system("asdf where java"))
+local java_bin = java_home .. "/bin/java"
+
 if vim.fn.has "mac" == 1 then
   WORKSPACE_PATH = home .. "/workspace/"
   CONFIG = "mac"
@@ -34,9 +28,6 @@ local root_dir = require("jdtls.setup").find_root(root_markers)
 if root_dir == "" then
   return
 end
-
-local extendedClientCapabilities = jdtls.extendedClientCapabilities
-extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local workspace_dir = WORKSPACE_PATH .. project_name
@@ -60,8 +51,7 @@ local config = {
   -- The command that starts the language server
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   cmd = {
-    "java", -- or '/path/to/java11_or_newer/bin/java'
-    -- "/Library/Java/JavaVirtualMachines/openjdk-17.jdk/Contents/Home/bin/java",
+    java_bin,
     "-Declipse.application=org.eclipse.jdt.ls.core.id1",
     "-Dosgi.bundles.defaultStartLevel=4",
     "-Declipse.product=org.eclipse.jdt.ls.core.product",
@@ -92,7 +82,6 @@ local config = {
     require("jdtls").setup_dap { hotcodereplace = "auto" }
     require("jdtls.dap").setup_dap_main_class_configs()
   end,
-  capabilities = capabilities,
 
   -- This is the default if not provided, you can remove it. Or adjust as needed.
   -- One dedicated LSP server & client will be started per unique root_dir
@@ -110,13 +99,6 @@ local config = {
       -- },
       eclipse = {
         downloadSources = true,
-      },
-      configuration = {
-        runtimes = {
-          name = "JavaSE-18",
-          path = "/Library/Java/JavaVirtualMachines/openjdk-18/Contents/Home",
-        },
-        --updateBuildConfiguration = "interactive"
       },
       maven = {
         downloadSources = true,
@@ -137,37 +119,26 @@ local config = {
       },
       format = {
         enabled = false,
-        -- settings = {
-        --   profile = "asdf"
-        -- }
+      },
+      completion = {
+        favoriteStaticMembers = {
+          "org.hamcrest.MatcherAssert.assertThat",
+          "org.hamcrest.Matchers.*",
+          "org.hamcrest.CoreMatchers.*",
+          "org.junit.jupiter.api.Assertions.*",
+          "java.util.Objects.requireNonNull",
+          "java.util.Objects.requireNonNullElse",
+          "org.mockito.Mockito.*",
+        },
+      },
+      sources = {
+        organizeImports = {
+          starThreshold = 9999,
+          staticStarThreshold = 9999,
+        },
       },
     },
     signatureHelp = { enabled = true },
-    completion = {
-      favoriteStaticMembers = {
-        "org.hamcrest.MatcherAssert.assertThat",
-        "org.hamcrest.Matchers.*",
-        "org.hamcrest.CoreMatchers.*",
-        "org.junit.jupiter.api.Assertions.*",
-        "java.util.Objects.requireNonNull",
-        "java.util.Objects.requireNonNullElse",
-        "org.mockito.Mockito.*",
-      },
-    },
-    contentProvider = { preferred = "fernflower" },
-    extendedClientCapabilities = extendedClientCapabilities,
-    sources = {
-      organizeImports = {
-        starThreshold = 9999,
-        staticStarThreshold = 9999,
-      },
-    },
-    codeGeneration = {
-      toString = {
-        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
-      },
-      useBlocks = true,
-    },
   },
 
   flags = {
@@ -186,31 +157,6 @@ local config = {
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
 jdtls.start_or_attach(config)
-
-local jdtls_util = require('jdtls.util')
-local dap = require('dap')
-dap.adapters.java = function(callback)
-  jdtls_util.execute_command({command = 'vscode.java.startDebugSession'}, function(err0, port)
-    assert(not err0, vim.inspect(err0))
-    callback({
-      type = 'server';
-      host = '127.0.0.1';
-      port = port;
-    })
-  end)
-end
-
-dap.configurations.java = {
-  {
-    type = 'java';
-    request = 'attach';
-    name = "Debug (Attach) - Remote";
-    hostName = "127.0.0.1";
-    port = 5005;
-  },
-}
-
-require('jdtls').setup_dap()
 
 vim.cmd "command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>)"
 vim.cmd "command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>)"
