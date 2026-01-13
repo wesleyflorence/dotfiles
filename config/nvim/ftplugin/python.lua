@@ -3,22 +3,13 @@ if not status_ok then
   return
 end
 
-local opts = {
-  mode = "n", -- NORMAL mode
-  prefix = "<leader>",
-  buffer = nil, -- Global mappings. Specify a buffer number for buffer local mappings
-  silent = true, -- use `silent` when creating keymaps
-  noremap = true, -- use `noremap` when creating keymaps
-  nowait = true, -- use `nowait` when creating keymaps
-}
+-- Get current buffer for buffer-local mappings
+local buf = vim.api.nvim_get_current_buf()
 
-local mappings = {
-  r = {
-    name = "Python Repl",
-    b = {"<cmd>lua require('iron.core').send_file()<cr>", "Send Python Buffer"},
-    c = {"<cmd>lua require('iron.core').send_motion({'j'})<cr>", "Send Jupyter Cell"},
-  },
-}
-
-which_key.register(mappings, opts)
+-- Register Python REPL mappings using new which-key v3 format
+which_key.add({
+  { "<leader>r", group = "Python Repl", buffer = buf },
+  { "<leader>rb", "<cmd>lua require('iron.core').send_file()<cr>", desc = "Send Python Buffer", buffer = buf },
+  { "<leader>rc", "<cmd>lua require('iron.core').send_motion({'j'})<cr>", desc = "Send Jupyter Cell", buffer = buf },
+})
 

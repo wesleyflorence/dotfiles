@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./config/fish/env.fish)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(**/*.key)",
+      "Read(**/*secret*)",
+      "Read(**/*credential*)",
+      "Read(**/*token*)"
+    ]
+  }
+}

@@ -59,8 +59,6 @@ return {
       {"rafamadriz/friendly-snippets"},
     }
   },
-  { "jose-elias-alvarez/null-ls.nvim" }, -- for formatters and linters
-  { "jay-babu/mason-null-ls.nvim" }, -- for formatters and lintersplug
   { "ray-x/lsp_signature.nvim" },
   { "simrat39/symbols-outline.nvim" },
   { "b0o/SchemaStore.nvim" },

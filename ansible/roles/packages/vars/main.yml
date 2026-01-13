@@ -9,9 +9,14 @@ cli_packages:
   - tree
   - bottom
   - glow
-  - neovim 
+  - neovim
   - uv
   - asdf
+  # Code formatters for neovim
+  - stylua          # Lua formatter
+  - shfmt           # Shell script formatter
+  - prettier        # JS/TS/JSON/HTML/CSS/YAML formatter
+  - google-java-format  # Java formatter
 
 gui_packages:
   - visual-studio-code
@@ -22,5 +27,9 @@ gui_packages:
 python_packages:
     - shell-gpt
     - shell-gpt[litellm]
-    - aider-chat
-    - aider-chat[browser]
+    - ruff  # Python linter and formatter for neovim
+    # - aider-chat
+    # - aider-chat[browser]
+
+bun_packages:
+  - '@anthropic-ai/claude-code'

@@ -160,4 +160,4 @@ end
 source ~/.config/fish/env.fish
 
 # Always add homebrew to the path
-set -x PATH /opt/homebrew/bin /opt/homebrew/sbin ~/bin ~/.local/bin $PATH
+set -x PATH /opt/homebrew/bin /opt/homebrew/sbin ~/bin ~/.bun/bin ~/.local/bin $PATH

@@ -12,22 +12,27 @@
 - name: Install with ASDF
   command: asdf install {{ item }}
   loop:
-    - java openjdk-17
+    # - java openjdk-17
     - java openjdk-21
     - bun latest
-    - gradle latest
+    # - gradle latest
     - kotlin latest
   changed_when: false
 
 - name: Set latest Bun as global version
-  command: asdf global {{ item }}
+  command: asdf set {{ item }}
   loop:
-    - java openjdk-17
+    # - java openjdk-17
     - bun latest
-    - gradle latest
+    # - gradle latest
     - kotlin latest
   changed_when: false
 
 - name: Refresh ASDF shims
   command: asdf reshim
+  changed_when: false
+
+- name: Install global Bun packages
+  command: bun install -g {{ item }}
+  loop: "{{ bun_packages }}"
   changed_when: false

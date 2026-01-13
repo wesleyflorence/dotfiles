@@ -1,22 +1,51 @@
-return { "nvim-treesitter/nvim-treesitter",
-  config = function ()
-    require'nvim-treesitter.configs'.setup {
-      ensure_installed = {}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-      sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
-      ignore_install = { "phpdoc", "erlang", "org" }, -- List of parsers to ignore installing
+return {
+  "nvim-treesitter/nvim-treesitter",
+  build = ":TSUpdate", -- Auto-update parsers when plugin updates
+  config = function()
+    require("nvim-treesitter.configs").setup({
+      -- Auto-install parsers for these languages
+      ensure_installed = {
+        "lua",
+        "python",
+        "typescript",
+        "javascript",
+        "tsx",
+        "json",
+        "yaml",
+        "html",
+        "css",
+        "bash",
+        "go",
+        "java",
+        "kotlin",
+        "markdown",
+        "markdown_inline",
+        "vim",
+        "vimdoc",
+      },
+      auto_install = true, -- Auto-install parsers when opening files
+      sync_install = false,
+      ignore_install = { "phpdoc", "erlang", "org" },
+
       autopairs = {
         enable = true,
       },
+
       highlight = {
-        enable = true, -- false will disable the whole extension
-        disable = { "" }, -- list of language that will be disabled
-        additional_vim_regex_highlighting = true,
+        enable = true,
+        disable = {}, -- Disable for specific languages if needed
+        additional_vim_regex_highlighting = false, -- Set to false for better performance
       },
-      indent = { enable = true, disable = { "yaml" } },
+
+      indent = {
+        enable = true,
+        disable = { "yaml" },
+      },
+
       context_commentstring = {
         enable = true,
         enable_autocmd = false,
       },
-    }
-  end
+    })
+  end,
 }
