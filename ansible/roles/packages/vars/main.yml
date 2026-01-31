@@ -13,11 +13,13 @@ cli_packages:
   - uv
   - asdf
   - zoxide
+  - orbstack
+  - supabase
   # Code formatters for neovim
-  - stylua          # Lua formatter
-  - shfmt           # Shell script formatter
-  - prettier        # JS/TS/JSON/HTML/CSS/YAML formatter
-  - google-java-format  # Java formatter
+  - stylua # Lua formatter
+  - shfmt # Shell script formatter
+  - prettier # JS/TS/JSON/HTML/CSS/YAML formatter
+  - google-java-format # Java formatter
 
 gui_packages:
   - visual-studio-code
@@ -28,11 +30,9 @@ gui_packages:
   - ghostty
 
 python_packages:
-    - shell-gpt
-    - shell-gpt[litellm]
-    - ruff  # Python linter and formatter for neovim
-    # - aider-chat
-    # - aider-chat[browser]
+  - ruff # Python linter and formatter for neovim
+  # - aider-chat
+  # - aider-chat[browser]
 
 bun_packages:
-  - '@anthropic-ai/claude-code'
+  - "@anthropic-ai/claude-code"

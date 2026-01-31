@@ -1,4 +1,9 @@
 ---
+- name: Tap Supabase repository
+  homebrew_tap:
+    name: supabase/tap
+    state: present
+
 - name: Install or update CLI packages with Homebrew
   homebrew:
     name: "{{ cli_packages }}"

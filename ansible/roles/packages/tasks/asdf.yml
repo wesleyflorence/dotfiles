@@ -7,7 +7,7 @@
     - kotlin
     - java
   changed_when: false
-  ignore_errors: yes  # In case the plugin is already installed
+  ignore_errors: yes # In case the plugin is already installed
 
 - name: Install with ASDF
   command: asdf install {{ item }}
