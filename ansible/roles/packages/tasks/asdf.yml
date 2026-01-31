@@ -31,8 +31,7 @@
 - name: Refresh ASDF shims
   command: asdf reshim
   changed_when: false
-
-- name: Install global Bun packages
-  command: bun install -g {{ item }}
-  loop: "{{ bun_packages }}"
-  changed_when: false
+#- name: Install global Bun packages
+#  command: bun install -g {{ item }}
+#  loop: "{{ bun_packages }}"
+#  changed_when: false
