@@ -1,0 +1,62 @@
+---
+- name: Create Fish themes directory
+  file:
+    path: "{{ user_home }}/.config/fish/themes"
+    state: directory
+
+- name: Link Fish theme files
+  file:
+    src: "{{ playbook_dir }}/../../config/fish/themes/{{ item }}"
+    dest: "{{ user_home }}/.config/fish/themes/{{ item }}"
+    state: link
+    force: yes
+    follow: false
+  loop:
+    - github-dark.fish
+    - github-light.fish
+
+- name: Create Tmux themes directory
+  file:
+    path: "{{ user_home }}/.config/tmux/themes"
+    state: directory
+
+- name: Link Tmux theme files
+  file:
+    src: "{{ playbook_dir }}/../../config/tmux/themes/{{ item }}"
+    dest: "{{ user_home }}/.config/tmux/themes/{{ item }}"
+    state: link
+    force: yes
+    follow: false
+  loop:
+    - github-dark.conf
+    - github-light.conf
+
+- name: Read current theme
+  slurp:
+    src: "{{ playbook_dir }}/../../themes/current"
+  register: current_theme_file
+
+- name: Set current theme fact
+  set_fact:
+    current_theme: "{{ current_theme_file.content | b64decode | trim }}"
+
+- name: Create current Tmux theme symlink
+  file:
+    src: "{{ playbook_dir }}/../../config/tmux/themes/github-{{ current_theme }}.conf"
+    dest: "{{ user_home }}/.config/tmux/current-theme.conf"
+    state: link
+    force: yes
+    follow: false
+
+- name: Create bin directory
+  file:
+    path: "{{ user_home }}/bin"
+    state: directory
+
+- name: Link theme toggle script
+  file:
+    src: "{{ playbook_dir }}/../../scripts/theme-toggle.fish"
+    dest: "{{ user_home }}/bin/theme-toggle"
+    state: link
+    force: yes
+    follow: false

@@ -25,7 +25,6 @@ gui_packages:
   - visual-studio-code
   - intellij-idea-ce
   - font-jetbrains-mono-nerd-font
-  - alacritty
   - zen-browser
   - ghostty
 

@@ -9,7 +9,7 @@ font-family = JetBrainsMono Nerd Font
 font-size = 11
 
 # GitHub Dark theme (from nvim github-nvim-theme)
-theme = Github Dark
+theme = GitHub Dark
 
 # Window (minimal title bar for dragging)
 macos-titlebar-style = tabs

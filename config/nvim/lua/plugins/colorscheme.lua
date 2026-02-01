@@ -7,7 +7,14 @@ return {
         transparent = true,
       }
     })
-    vim.cmd('colorscheme github_dark')
+    -- Read theme from state file
+    local theme = "dark"
+    local f = io.open(vim.fn.expand("~/dotfiles/themes/current"), "r")
+    if f then
+      theme = f:read("*l"):gsub("%s+", "")
+      f:close()
+    end
+    vim.cmd('colorscheme ' .. (theme == "light" and "github_light" or "github_dark"))
   end,
 }
 

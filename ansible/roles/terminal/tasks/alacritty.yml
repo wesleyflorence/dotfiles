@@ -1,8 +1,0 @@
----
-- name: Link alacritty config file
-  file:
-    src: "{{ playbook_dir }}/../../config/alacritty/alacritty.toml"
-    dest: "{{ alacritty_config_path }}"
-    state: link
-    force: yes
-    follow: false
