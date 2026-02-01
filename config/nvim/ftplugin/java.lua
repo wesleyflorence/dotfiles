@@ -4,29 +4,35 @@ vim.opt_local.cmdheight = 2 -- more space in the neovim command line for display
 
 local status, jdtls = pcall(require, "jdtls")
 if not status then
-  return
+	return
 end
 
 -- Determine OS and Java path
-local home = os.getenv "HOME"
-local java_home = vim.fn.trim(vim.fn.system("asdf where java"))
-local java_bin = java_home .. "/bin/java"
+local home = os.getenv("HOME")
+-- Use Homebrew's Java 21 for jdtls (requires Java 21+)
+-- Project-level Java version is still managed by asdf
+local java_bin = "/opt/homebrew/opt/openjdk@25/bin/java"
 
-if vim.fn.has "mac" == 1 then
-  WORKSPACE_PATH = home .. "/workspace/"
-  CONFIG = "mac"
-elseif vim.fn.has "unix" == 1 then
-  WORKSPACE_PATH = home .. "/workspace/"
-  CONFIG = "linux"
+if vim.fn.has("mac") == 1 then
+	WORKSPACE_PATH = home .. "/workspace/"
+	-- Use ARM config for Apple Silicon
+	if vim.fn.system("uname -m"):find("arm64") then
+		CONFIG = "mac_arm"
+	else
+		CONFIG = "mac"
+	end
+elseif vim.fn.has("unix") == 1 then
+	WORKSPACE_PATH = home .. "/workspace/"
+	CONFIG = "linux"
 else
-  print "Unsupported system"
+	print("Unsupported system")
 end
 
 -- Find root of project
 local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
 local root_dir = require("jdtls.setup").find_root(root_markers)
 if root_dir == "" then
-  return
+	return
 end
 
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
@@ -36,138 +42,137 @@ local bundles = {}
 
 vim.list_extend(bundles, vim.split(vim.fn.glob(mason_path .. "java-test/extension/server/*.jar"), "\n"))
 vim.list_extend(
-  bundles,
-  vim.split(
-    vim.fn.glob(
-      mason_path .. "java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar",
-      1
-    ),
-    "\n"
-  )
+	bundles,
+	vim.split(
+		vim.fn.glob(mason_path .. "java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar", 1),
+		"\n"
+	)
 )
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
-  -- The command that starts the language server
-  -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
-  cmd = {
-    java_bin,
-    "-Declipse.application=org.eclipse.jdt.ls.core.id1",
-    "-Dosgi.bundles.defaultStartLevel=4",
-    "-Declipse.product=org.eclipse.jdt.ls.core.product",
-    "-Dlog.protocol=true",
-    "-Dlog.level=ALL",
-    "-Xms1g",
-    "--add-modules=ALL-SYSTEM",
-    "--add-opens",
-    "java.base/java.util=ALL-UNNAMED",
-    "--add-opens",
-    "java.base/java.lang=ALL-UNNAMED",
-    -- "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
-    "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
-    "-jar",
-    vim.fn.glob(mason_path .. "jdtls/plugins/org.eclipse.equinox.launcher_*.jar"),
-    "-configuration",
-    mason_path .. "jdtls/config_" .. CONFIG,
-    "-data",
-    workspace_dir,
-  },
+	-- The command that starts the language server
+	-- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
+	cmd = {
+		java_bin,
+		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
+		"-Dosgi.bundles.defaultStartLevel=4",
+		"-Declipse.product=org.eclipse.jdt.ls.core.product",
+		"-Dlog.protocol=true",
+		"-Dlog.level=ALL",
+		"-Xms1g",
+		"--add-modules=ALL-SYSTEM",
+		"--add-opens",
+		"java.base/java.util=ALL-UNNAMED",
+		"--add-opens",
+		"java.base/java.lang=ALL-UNNAMED",
+		-- "-javaagent:" .. mason_path .. "jdtls/lombok.jar",
+		"-javaagent:"
+			.. mason_path
+			.. "jdtls/lombok.jar",
+		"-jar",
+		vim.fn.glob(mason_path .. "jdtls/plugins/org.eclipse.equinox.launcher_*.jar"),
+		"-configuration",
+		mason_path .. "jdtls/config_" .. CONFIG,
+		"-data",
+		workspace_dir,
+	},
 
-  on_attach = function (client, bufnr)
-    -- With `hotcodereplace = 'auto' the debug adapter will try to apply code changes
-    -- you make during a debug session immediately.
-    -- Remove the option if you do not want that.
-    -- You can use the `JdtHotcodeReplace` command to trigger it manually
-    vim.lsp.codelens.refresh()
-    require("jdtls").setup_dap { hotcodereplace = "auto" }
-    require("jdtls.dap").setup_dap_main_class_configs()
-  end,
+	on_attach = function(client, bufnr)
+		-- With `hotcodereplace = 'auto' the debug adapter will try to apply code changes
+		-- you make during a debug session immediately.
+		-- Remove the option if you do not want that.
+		-- You can use the `JdtHotcodeReplace` command to trigger it manually
+		vim.lsp.codelens.refresh()
+		require("jdtls").setup_dap({ hotcodereplace = "auto" })
+		require("jdtls.dap").setup_dap_main_class_configs()
+	end,
 
-  -- This is the default if not provided, you can remove it. Or adjust as needed.
-  -- One dedicated LSP server & client will be started per unique root_dir
-  root_dir = root_dir,
+	-- This is the default if not provided, you can remove it. Or adjust as needed.
+	-- One dedicated LSP server & client will be started per unique root_dir
+	root_dir = root_dir,
 
-  -- Here you can configure eclipse.jdt.ls specific settings
-  -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-  -- or https://github.com/redhat-developer/vscode-java#supported-vs-code-settings
-  settings = {
-    java = {
-      -- jdt = {
-      --   ls = {
-      --     vmargs = "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m"
-      --   }
-      -- },
-      eclipse = {
-        downloadSources = true,
-      },
-      maven = {
-        downloadSources = true,
-      },
-      implementationsCodeLens = {
-        enabled = true,
-      },
-      referencesCodeLens = {
-        enabled = true,
-      },
-      references = {
-        includeDecompiledSources = true,
-      },
-      inlayHints = {
-        parameterNames = {
-          enabled = "all", -- literals, all, none
-        },
-      },
-      format = {
-        enabled = false,
-      },
-      completion = {
-        favoriteStaticMembers = {
-          "org.hamcrest.MatcherAssert.assertThat",
-          "org.hamcrest.Matchers.*",
-          "org.hamcrest.CoreMatchers.*",
-          "org.junit.jupiter.api.Assertions.*",
-          "java.util.Objects.requireNonNull",
-          "java.util.Objects.requireNonNullElse",
-          "org.mockito.Mockito.*",
-        },
-      },
-      sources = {
-        organizeImports = {
-          starThreshold = 9999,
-          staticStarThreshold = 9999,
-        },
-      },
-    },
-    signatureHelp = { enabled = true },
-  },
+	-- Here you can configure eclipse.jdt.ls specific settings
+	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+	-- or https://github.com/redhat-developer/vscode-java#supported-vs-code-settings
+	settings = {
+		java = {
+			-- jdt = {
+			--   ls = {
+			--     vmargs = "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m"
+			--   }
+			-- },
+			eclipse = {
+				downloadSources = true,
+			},
+			maven = {
+				downloadSources = true,
+			},
+			implementationsCodeLens = {
+				enabled = true,
+			},
+			referencesCodeLens = {
+				enabled = true,
+			},
+			references = {
+				includeDecompiledSources = true,
+			},
+			inlayHints = {
+				parameterNames = {
+					enabled = "all", -- literals, all, none
+				},
+			},
+			format = {
+				enabled = false,
+			},
+			completion = {
+				favoriteStaticMembers = {
+					"org.hamcrest.MatcherAssert.assertThat",
+					"org.hamcrest.Matchers.*",
+					"org.hamcrest.CoreMatchers.*",
+					"org.junit.jupiter.api.Assertions.*",
+					"java.util.Objects.requireNonNull",
+					"java.util.Objects.requireNonNullElse",
+					"org.mockito.Mockito.*",
+				},
+			},
+			sources = {
+				organizeImports = {
+					starThreshold = 9999,
+					staticStarThreshold = 9999,
+				},
+			},
+		},
+		signatureHelp = { enabled = true },
+	},
 
-  flags = {
-    allow_incremental_sync = true,
-  },
+	flags = {
+		allow_incremental_sync = true,
+	},
 
-  -- Language server `initializationOptions`
-  -- You need to extend the `bundles` with paths to jar files
-  -- if you want to use additional eclipse.jdt.ls plugins.
-  -- See https://github.com/mfussenegger/nvim-jdtls#java-debug-installation
-  init_options = {
-    bundles = bundles,
-  },
+	-- Language server `initializationOptions`
+	-- You need to extend the `bundles` with paths to jar files
+	-- if you want to use additional eclipse.jdt.ls plugins.
+	-- See https://github.com/mfussenegger/nvim-jdtls#java-debug-installation
+	init_options = {
+		bundles = bundles,
+	},
 }
 
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
 jdtls.start_or_attach(config)
 
-vim.cmd "command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>)"
-vim.cmd "command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>)"
-vim.cmd "command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config()"
+vim.cmd("command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_compile JdtCompile lua require('jdtls').compile(<f-args>)")
+vim.cmd("command! -buffer -nargs=? -complete=custom,v:lua.require'jdtls'._complete_set_runtime JdtSetRuntime lua require('jdtls').set_runtime(<f-args>)")
+vim.cmd("command! -buffer JdtUpdateConfig lua require('jdtls').update_project_config()")
 -- vim.cmd "command! -buffer JdtJol lua require('jdtls').jol()"
-vim.cmd "command! -buffer JdtBytecode lua require('jdtls').javap()"
+vim.cmd("command! -buffer JdtBytecode lua require('jdtls').javap()")
 -- vim.cmd "command! -buffer JdtJshell lua require('jdtls').jshell()"
 
 local status_ok, which_key = pcall(require, "which-key")
 if not status_ok then
-  return
+	return
 end
 
 -- Get current buffer for buffer-local mappings
@@ -175,17 +180,35 @@ local buf = vim.api.nvim_get_current_buf()
 
 -- Register Java mappings using new which-key v3 format
 which_key.add({
-  -- Normal mode mappings
-  { "<leader>L", group = "Java", buffer = buf },
-  { "<leader>Lo", "<Cmd>lua require'jdtls'.organize_imports()<CR>", desc = "Organize Imports", buffer = buf },
-  { "<leader>Lv", "<Cmd>lua require('jdtls').extract_variable()<CR>", desc = "Extract Variable", buffer = buf },
-  { "<leader>Lc", "<Cmd>lua require('jdtls').extract_constant()<CR>", desc = "Extract Constant", buffer = buf },
-  { "<leader>Lt", "<Cmd>lua require'jdtls'.test_nearest_method()<CR>", desc = "Test Method", buffer = buf },
-  { "<leader>LT", "<Cmd>lua require'jdtls'.test_class()<CR>", desc = "Test Class", buffer = buf },
-  { "<leader>Lu", "<Cmd>JdtUpdateConfig<CR>", desc = "Update Config", buffer = buf },
+	-- Normal mode mappings
+	{ "<leader>L", group = "Java", buffer = buf },
+	{ "<leader>Lo", "<Cmd>lua require'jdtls'.organize_imports()<CR>", desc = "Organize Imports", buffer = buf },
+	{ "<leader>Lv", "<Cmd>lua require('jdtls').extract_variable()<CR>", desc = "Extract Variable", buffer = buf },
+	{ "<leader>Lc", "<Cmd>lua require('jdtls').extract_constant()<CR>", desc = "Extract Constant", buffer = buf },
+	{ "<leader>Lt", "<Cmd>lua require'jdtls'.test_nearest_method()<CR>", desc = "Test Method", buffer = buf },
+	{ "<leader>LT", "<Cmd>lua require'jdtls'.test_class()<CR>", desc = "Test Class", buffer = buf },
+	{ "<leader>Lu", "<Cmd>JdtUpdateConfig<CR>", desc = "Update Config", buffer = buf },
 
-  -- Visual mode mappings
-  { "<leader>Lv", "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>", desc = "Extract Variable", mode = "v", buffer = buf },
-  { "<leader>Lc", "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>", desc = "Extract Constant", mode = "v", buffer = buf },
-  { "<leader>Lm", "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>", desc = "Extract Method", mode = "v", buffer = buf },
+	-- Visual mode mappings
+	{
+		"<leader>Lv",
+		"<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>",
+		desc = "Extract Variable",
+		mode = "v",
+		buffer = buf,
+	},
+	{
+		"<leader>Lc",
+		"<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>",
+		desc = "Extract Constant",
+		mode = "v",
+		buffer = buf,
+	},
+	{
+		"<leader>Lm",
+		"<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>",
+		desc = "Extract Method",
+		mode = "v",
+		buffer = buf,
+	},
 })

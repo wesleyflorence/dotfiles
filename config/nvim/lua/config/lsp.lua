@@ -54,7 +54,7 @@ require('mason-lspconfig').setup({
     "lua_ls",
     "tflint",
     "terraformls",
-    "ts_ls", -- TypeScript/JavaScript (replaced tsserver)
+    "tsserver", -- TypeScript/JavaScript
     "pyright",
     "ruff",
     "yamlls",
